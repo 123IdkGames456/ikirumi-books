@@ -72,13 +72,13 @@ const STORE='ikirumi-books-library-v2';
 const $=id=>document.getElementById(id);
 const synth=window.speechSynthesis;
 let books=[],activeId=null,activeBook=null,wordIndex=0,wordList=[],isPlaying=false,chunkStart=0,voices=[];
-function words(text){return text.match(/\\S+/g)||[]}
+function words(text){return text.match(/\S+/g)||[]}
 function wordCount(text){return words(text).length}
 function defaultBook(){
  const legacy=$('legacyContent');
  const title='The Torches Wind';
- const parts=[...legacy.querySelectorAll('.intro,.rules,.chapter')].map(el=>el.innerText.replace(/\\n{3,}/g,'\\n\\n').trim()).filter(Boolean);
- return {id:'torches-wind',title,subtitle:'A mystery told in the dark',text:parts.join('\\n\\n'),lastWord:0};
+ const parts=[...legacy.querySelectorAll('.intro,.rules,.chapter')].map(el=>el.innerText.replace(/\n{3,}/g,'\n\n').trim()).filter(Boolean);
+ return {id:'torches-wind',title,subtitle:'A mystery told in the dark',text:parts.join('\n\n'),lastWord:0};
 }
 function load(){
  try{const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved&&Array.isArray(saved.books)&&saved.books.length){books=saved.books;return}}catch(e){}
@@ -119,8 +119,8 @@ function openBook(id){
 }
 function renderSections(){
  const sel=$('sectionSelect');sel.innerHTML='';
- const paragraphs=activeBook.text.split(/\\n\\s*\\n/).map(t=>t.trim()).filter(Boolean);
- paragraphs.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.replace(/\\s+/g,' ').slice(0,50)+(p.length>50?'…':'');sel.append(o)});
+ const paragraphs=activeBook.text.split(/\n\s*\n/).map(t=>t.trim()).filter(Boolean);
+ paragraphs.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.replace(/\s+/g,' ').slice(0,50)+(p.length>50?'…':'');sel.append(o)});
 }
 function renderVisibleText(){
  const container=$('visibleText');container.textContent=activeBook.text;
@@ -185,7 +185,7 @@ $('back10').onclick=()=>goToWord(wordIndex-9);
 $('forward10').onclick=()=>goToWord(wordIndex+11);
 $('jumpWord').onclick=()=>goToWord($('wordNumber').value);
 $('goSection').onclick=()=>{
- const n=Number($('sectionSelect').value)||0;const paras=activeBook.text.split(/\\n\\s*\\n/).map(t=>t.trim()).filter(Boolean);
+ const n=Number($('sectionSelect').value)||0;const paras=activeBook.text.split(/\n\s*\n/).map(t=>t.trim()).filter(Boolean);
  goToWord(paras.slice(0,n).reduce((sum,p)=>sum+wordCount(p),0)+1);
 };
 $('viewText').onclick=()=>{$('editPanel').hidden=true;$('textPanel').hidden=!$('textPanel').hidden;renderVisibleText()};
