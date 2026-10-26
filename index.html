@@ -154,11 +154,9 @@ function renderEpisode(){
 function stopSpeech(){if(synth)synth.cancel();isPlaying=false}
 function updateProgress(){
  if(!activeBook)return;
- const total=Math.max(1,wordCount(activeBook.text));
+ const total=Math.max(1,wordCount(currentEpisodeText()));
  wordIndex=Math.max(0,Math.min(wordIndex,total));
- activeBook.lastWord=wordIndex;persist();
  $('wordNumber').value=Math.min(total,wordIndex+1);
- $('bookProgress').textContent='Word '+Math.min(total,wordIndex+1)+' of '+total+' · your place is saved';
  $('listenProgress').style.width=(100*wordIndex/total)+'%';
 }
 function renderGallery(){
@@ -177,7 +175,7 @@ function renderGallery(){
 }
 function openBook(id){
  stopSpeech();activeId=id;activeBook=current();if(!activeBook)return;
- wordList=words(activeBook.text);wordIndex=Math.max(0,Math.min(wordList.length,activeBook.lastWord||0));
+ activeBook.readEpisodes=Array.isArray(activeBook.readEpisodes)?activeBook.readEpisodes:[];episodeIndex=0;episodePart=0;episodeParts=getEpisodes(activeBook);wordList=words(currentEpisodeText());wordIndex=0;
  $('galleryView').hidden=true;$('readerView').hidden=false;
  $('bookTitle').textContent=activeBook.title;$('textPanel').hidden=true;$('editPanel').hidden=true;
  renderSections();renderVisibleText();renderEpisode();updateProgress();persist();window.scrollTo({top:0,behavior:'smooth'});
@@ -202,7 +200,7 @@ function updateVoiceList(){
 function textFromWord(index){return wordList.slice(index).join(' ')}
 function speakNext(){
  if(!isPlaying||!activeBook)return;
- wordList=words(activeBook.text);
+ wordList=words(currentEpisodeText());
  if(wordIndex>=wordList.length){isPlaying=false;$('readerStatus').textContent='Finished this part. Choose the other part or Next Episode.';updateProgress();return}
  chunkStart=wordIndex;
  const chunkWords=wordList.slice(chunkStart,chunkStart+90);
@@ -233,7 +231,7 @@ function play(){
  isPlaying=true;updateVoiceList();speakNext();
 }
 function goToWord(n){
- stopSpeech();wordList=words(activeBook.text);
+ stopSpeech();wordList=words(currentEpisodeText());
  wordIndex=Math.max(0,Math.min(wordList.length-1,(Number(n)||1)-1));
  updateProgress();$('readerStatus').textContent='Ready at word '+(wordIndex+1)+'. Press Play to listen.';
 }
