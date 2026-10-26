@@ -11,10 +11,36 @@ header{text-align:center;padding:42px 16px 28px;border-bottom:1px solid var(--li
 main{max-width:850px;padding:20px 16px 60px;margin:auto}.controls{position:sticky;top:8px;z-index:2;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#11151bee;backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:24px}.controls label{font:12px system-ui;color:var(--muted);display:flex;align-items:center;gap:6px}.controls select{font-size:13px}#status{font:12px system-ui;color:var(--muted)}
 .intro,.rules,.chapter{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,5vw,36px);margin:18px 0}.chapter{scroll-margin-top:110px;background:#151a21}.chapter-no{font:700 11px system-ui;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}h2{font:700 clamp(1.6rem,4vw,2.2rem)/1.2 system-ui;letter-spacing:-.03em;margin:10px 0 24px}h3{font:700 1.2rem system-ui;color:var(--gold)}p{margin:0 0 1.15em}p:last-child{margin-bottom:0}.dialogue{color:#f4e4bd}.rules li{margin:7px 0}.progress{height:3px;position:fixed;top:0;left:0;right:0;z-index:5;background:#303744}.progress span{display:block;height:100%;width:0;background:var(--gold)}.endnote{text-align:center;color:var(--muted);font:13px/1.6 system-ui;padding:20px 0}
 @media(max-width:600px){.controls{position:relative;top:0}.controls button{flex:1}.controls label{width:100%;justify-content:space-between}#status{width:100%}}@media print{.controls,.progress{display:none}body{background:white;color:#111}.intro,.rules,.chapter{background:white;border:0}}
+
+#app{max-width:1000px}.library-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:14px 0 22px}.library-heading h2{margin:8px 0}.hint{font:14px/1.5 system-ui;color:var(--muted)}.book-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.book-card{border:1px solid var(--line);background:linear-gradient(145deg,#202834,#151a21);border-radius:18px;padding:22px;min-height:230px;display:flex;flex-direction:column;gap:12px}.book-card h3{font:700 1.4rem/1.2 system-ui;color:var(--ink);margin:0}.book-card .book-icon{font-size:30px;color:var(--gold)}.book-card .card-progress{height:5px;background:#303744;border-radius:8px;overflow:hidden}.book-card .card-progress span{display:block;height:100%;background:var(--gold)}.book-card button{margin-top:auto}.reader-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 16px}.reader-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,32px)}.reader-card h2{margin:8px 0}.reader-controls,.jump-row,.reader-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:16px 0}.reader-controls label,.jump-row label,.edit-label{font:13px system-ui;color:var(--muted);display:flex;align-items:center;gap:8px}.reader-controls select,.jump-row select,.jump-row input,.edit-label input,.edit-label textarea{max-width:100%;font:15px system-ui;background:#111720;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:10px}.jump-row input{width:110px}.primary{background:#74551c;border-color:var(--gold)}.listen-progress{height:5px;background:#303744;border-radius:8px;overflow:hidden;margin:20px 0 10px}.listen-progress span{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}.reader-actions button{min-width:115px}.book-text{white-space:pre-wrap;font:18px/1.9 Georgia,serif;background:#10151c;border:1px solid var(--line);border-radius:12px;padding:18px;max-height:55vh;overflow:auto;margin:14px 0}.edit-label{display:flex;flex-direction:column;align-items:stretch;margin:14px 0;gap:7px}.edit-label input,.edit-label textarea{width:100%;font:16px/1.6 system-ui}.edit-label textarea{resize:vertical}.reader-card h3{margin:24px 0 8px}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.library-heading{align-items:flex-start;flex-direction:column}.reader-top{align-items:flex-start;flex-direction:column}.reader-controls label{width:100%;justify-content:space-between}.reader-controls select{flex:1;max-width:70%}.jump-row label{flex-wrap:wrap}.jump-row input{width:90px}.book-card{min-height:200px}}
 </style></head>
 <body><div class="progress"><span id="progressBar"></span></div>
-<header><div class="eyebrow">A mystery told in the dark</div><h1>The Torches Wind</h1><div class="subtitle">Ten teenagers · One remote town · Three imposters</div></header>
-<main>
+<header><div class="eyebrow">Your personal audiobook library</div><h1>Book Nook</h1><div class="subtitle">Listen · Pause · Pick up where you left off</div></header>
+
+<main id="app">
+<section id="galleryView">
+<div class="library-heading"><div><div class="eyebrow">Your library</div><h2>Choose a book</h2><p class="hint">Your place is saved separately for every book.</p></div><button id="addBook">＋ Add book</button></div>
+<div id="bookGallery" class="book-gallery"></div>
+</section>
+<section id="readerView" hidden>
+<div class="reader-top"><button id="backLibrary">← Library</button><span id="savedStatus" class="hint">Progress saved on this device</span></div>
+<div class="reader-card">
+<div class="eyebrow">Now listening</div><h2 id="bookTitle"></h2><p id="bookProgress" class="hint"></p>
+<div class="reader-controls">
+<button id="playBtn" class="primary">▶ Play</button><button id="pauseBtn">Ⅱ Pause</button><button id="stopBtn">■ Stop</button>
+<label>Speed <select id="speed"><option value=".7">0.7×</option><option value=".85">0.85×</option><option value="1" selected>1×</option><option value="1.15">1.15×</option><option value="1.3">1.3×</option></select></label>
+<label>Voice <select id="voice"><option>Loading English voices…</option></select></label>
+</div>
+<div class="jump-row"><button id="back10">↶ 10 words</button><label>Go to word <input id="wordNumber" type="number" min="1" value="1" inputmode="numeric"></label><button id="jumpWord">Go</button><button id="forward10">10 words ↷</button></div>
+<div class="jump-row"><label>Section <select id="sectionSelect"></select></label><button id="goSection">Go to section</button></div>
+<div class="listen-progress"><span id="listenProgress"></span></div>
+<div id="readerStatus" class="hint" aria-live="polite">Ready when you are.</div>
+<div class="reader-actions"><button id="viewText">View text</button><button id="editText">Edit text</button></div>
+<section id="textPanel" hidden><h3>Book text</h3><div id="visibleText" class="book-text"></div><button id="closeText">Close text</button></section>
+<section id="editPanel" hidden><h3>Edit this book</h3><p class="hint">Changes are saved in this browser and used for future listening.</p><label class="edit-label">Book title<input id="editTitle" type="text" maxlength="120"></label><label class="edit-label">Story text<textarea id="editStory" rows="16" spellcheck="true"></textarea></label><div class="reader-actions"><button id="saveEdit" class="primary">Save changes</button><button id="cancelEdit">Cancel</button></div></section>
+</div>
+</section>
+</main>\n<main id="legacyContent" hidden>
 <nav class="controls" aria-label="Audiobook controls">
 <button id="play">▶ Read aloud</button><button id="pause">Ⅱ Pause</button><button id="stop">■ Stop</button>
 <label>English voice <select id="voice"><option value="">Finding English voices…</option></select></label>
@@ -41,19 +67,139 @@ main{max-width:850px;padding:20px 16px 60px;margin:auto}.controls{position:stick
 <div class="endnote">Narration uses an English voice installed on your device. Browser voices can still sound synthetic; natural, human-style narration requires recorded or dedicated AI-generated audio.</div>
 </main>
 <script>
-(()=>{const s=window.speechSynthesis, chapters=[...document.querySelectorAll('.chapter')], ch=document.querySelector('#chapter'), vs=document.querySelector('#voice'), status=document.querySelector('#status'), bar=document.querySelector('#progressBar');let text='',pos=0,playing=false;
-chapters.forEach((c,i)=>{let o=document.createElement('option');o.value=c.id;o.textContent=(i+1)+'. '+c.querySelector('h2').textContent;ch.append(o)});
-let englishVoices=[];
-function voices(){if(!s)return;const all=s.getVoices();englishVoices=all.filter(v=>/^en([_-]|$)/i.test(v.lang));const old=vs.value;vs.innerHTML='';if(!englishVoices.length){const o=document.createElement('option');o.value='';o.textContent='No English voice installed';vs.append(o);status.textContent='No English voice found. Install an English text-to-speech voice in your device settings, then reload this page.';return}englishVoices.sort((a,b)=>{const score=v=>{const n=(v.name+' '+v.lang).toLowerCase();return (/en-us|en_us/.test(n)?20:0)+(/natural|neural|online/.test(n)?30:0)+(/aria|jenny|guy|samantha|google us english/.test(n)?15:0)+(/compact|espeak|robot/.test(n)?-20:0)};return score(b)-score(a)});englishVoices.forEach(v=>{const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' ('+v.lang+')';vs.append(o)});if(englishVoices.some(v=>v.voiceURI===old))vs.value=old;else{const preferred=englishVoices.find(v=>/en-US/i.test(v.lang))||englishVoices[0];vs.value=preferred.voiceURI}}
-if(s){voices();s.onvoiceschanged=voices}
-const clean=e=>e.innerText.replace(/\s+/g,' ').trim();
-function getText(){return ch.value==='all'?chapters.map(clean).join('\n\n'):clean(document.getElementById(ch.value))}
-function speak(){if(!s){status.textContent='Speech synthesis is not supported by this browser.';return}if(!englishVoices.length){voices();if(!englishVoices.length){status.textContent='No English voice is installed. Add an English voice in device settings and reload.';return}}s.cancel();text=getText();pos=0;chunk()}
-function chunk(){if(!text||pos>=text.length){playing=false;status.textContent='Finished';bar.style.width='100%';return}let rest=text.slice(pos),n=Math.min(rest.length,1800);if(n<rest.length){let k=rest.lastIndexOf('. ',n);if(k>700)n=k+1}let part=rest.slice(0,n),u=new SpeechSynthesisUtterance(part);u.lang='en-US';u.rate=Number(document.querySelector('#rate').value);u.voice=englishVoices.find(v=>v.voiceURI===vs.value)||englishVoices.find(v=>/en-US/i.test(v.lang))||englishVoices[0];u.onstart=()=>{playing=true;status.textContent='Reading aloud in English…'};u.onend=()=>{pos+=part.length;bar.style.width=(100*pos/Math.max(1,text.length))+'%';if(playing)chunk()};u.onerror=e=>{if(!['canceled','interrupted'].includes(e.error))status.textContent='Audio stopped: '+e.error};s.speak(u)}
-document.querySelector('#play').onclick=()=>{if(!s){status.textContent='Speech synthesis is not supported.';return}if(s.paused){s.resume();playing=true;status.textContent='Reading aloud…'}else if(!playing)speak()};
-document.querySelector('#pause').onclick=()=>{if(s&&playing){s.pause();status.textContent='Paused'}};
-document.querySelector('#stop').onclick=()=>{if(s)s.cancel();playing=false;pos=0;bar.style.width='0';status.textContent='Stopped'};
-ch.onchange=()=>{if(s)s.cancel();playing=false;pos=0;bar.style.width='0';status.textContent='Ready to read';(ch.value==='all'?document.querySelector('.intro'):document.getElementById(ch.value)).scrollIntoView({behavior:'smooth',block:'start'})};
-addEventListener('beforeunload',()=>{if(s)s.cancel()});
+(()=> {
+const STORE='ikirumi-books-library-v2';
+const $=id=>document.getElementById(id);
+const synth=window.speechSynthesis;
+let books=[],activeId=null,activeBook=null,wordIndex=0,wordList=[],isPlaying=false,chunkStart=0,voices=[];
+function words(text){return text.match(/\\S+/g)||[]}
+function wordCount(text){return words(text).length}
+function defaultBook(){
+ const legacy=$('legacyContent');
+ const title='The Torches Wind';
+ const parts=[...legacy.querySelectorAll('.intro,.rules,.chapter')].map(el=>el.innerText.replace(/\\n{3,}/g,'\\n\\n').trim()).filter(Boolean);
+ return {id:'torches-wind',title,subtitle:'A mystery told in the dark',text:parts.join('\\n\\n'),lastWord:0};
+}
+function load(){
+ try{const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved&&Array.isArray(saved.books)&&saved.books.length){books=saved.books;return}}catch(e){}
+ books=[defaultBook()];persist();
+}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify({books,activeId}))}catch(e){$('savedStatus').textContent='Could not save: browser storage may be full.'}}
+function current(){return books.find(b=>b.id===activeId)}
+function stopSpeech(){if(synth)synth.cancel();isPlaying=false}
+function updateProgress(){
+ if(!activeBook)return;
+ const total=Math.max(1,wordCount(activeBook.text));
+ wordIndex=Math.max(0,Math.min(wordIndex,total));
+ activeBook.lastWord=wordIndex;persist();
+ $('wordNumber').value=Math.min(total,wordIndex+1);
+ $('bookProgress').textContent='Word '+Math.min(total,wordIndex+1)+' of '+total+' · your place is saved';
+ $('listenProgress').style.width=(100*wordIndex/total)+'%';
+}
+function renderGallery(){
+ const gallery=$('bookGallery');gallery.innerHTML='';
+ books.forEach(book=>{
+  const total=Math.max(1,wordCount(book.text)),pos=Math.min(total,book.lastWord||0);
+  const card=document.createElement('article');card.className='book-card';
+  const icon=document.createElement('div');icon.className='book-icon';icon.textContent='▤';
+  const title=document.createElement('h3');title.textContent=book.title;
+  const meta=document.createElement('div');meta.className='hint';meta.textContent=pos?'Continue from word '+(pos+1):'Not started yet';
+  const bar=document.createElement('div');bar.className='card-progress';const fill=document.createElement('span');fill.style.width=(100*pos/total)+'%';bar.append(fill);
+  const open=document.createElement('button');open.className='primary';open.textContent=pos?'Continue listening':'Open book';open.onclick=()=>openBook(book.id);
+  const wordsMeta=document.createElement('div');wordsMeta.className='hint';wordsMeta.textContent=total+' words';
+  card.append(icon,title,meta,bar,wordsMeta,open);gallery.append(card);
+ });
+}
+function openBook(id){
+ stopSpeech();activeId=id;activeBook=current();if(!activeBook)return;
+ wordList=words(activeBook.text);wordIndex=Math.max(0,Math.min(wordList.length,activeBook.lastWord||0));
+ $('galleryView').hidden=true;$('readerView').hidden=false;
+ $('bookTitle').textContent=activeBook.title;$('textPanel').hidden=true;$('editPanel').hidden=true;
+ renderSections();renderVisibleText();updateProgress();persist();window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderSections(){
+ const sel=$('sectionSelect');sel.innerHTML='';
+ const paragraphs=activeBook.text.split(/\\n\\s*\\n/).map(t=>t.trim()).filter(Boolean);
+ paragraphs.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.replace(/\\s+/g,' ').slice(0,50)+(p.length>50?'…':'');sel.append(o)});
+}
+function renderVisibleText(){
+ const container=$('visibleText');container.textContent=activeBook.text;
+}
+function updateVoiceList(){
+ if(!synth)return;
+ voices=synth.getVoices().filter(v=>/^en([_-]|$)/i.test(v.lang));
+ const sel=$('voice'),old=sel.value;sel.innerHTML='';
+ if(!voices.length){const o=document.createElement('option');o.value='';o.textContent='No English voice found';sel.append(o);return}
+ voices.sort((a,b)=>{const score=v=>{const n=(v.name+' '+v.lang).toLowerCase();return (/natural|neural|online/.test(n)?20:0)+(/en-us/.test(n)?10:0)+(/compact|espeak/.test(n)?-20:0)};return score(b)-score(a)});
+ voices.forEach(v=>{const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' ('+v.lang+')';sel.append(o)});
+ if(voices.some(v=>v.voiceURI===old))sel.value=old;else {const preferred=voices.find(v=>/en-US/i.test(v.lang))||voices[0];sel.value=preferred.voiceURI}
+}
+function textFromWord(index){return wordList.slice(index).join(' ')}
+function speakNext(){
+ if(!isPlaying||!activeBook)return;
+ wordList=words(activeBook.text);
+ if(wordIndex>=wordList.length){isPlaying=false;$('readerStatus').textContent='Finished the book.';updateProgress();return}
+ chunkStart=wordIndex;
+ const chunkWords=wordList.slice(chunkStart,chunkStart+90);
+ const part=chunkWords.join(' ');
+ const utterance=new SpeechSynthesisUtterance(part);
+ utterance.rate=Number($('speed').value);
+ const voice=voices.find(v=>v.voiceURI===$('voice').value)||voices.find(v=>/en-US/i.test(v.lang))||voices[0];
+ if(voice){utterance.voice=voice;utterance.lang=voice.lang}else utterance.lang='en-US';
+ utterance.onboundary=e=>{
+  if(e.name==='word'&&typeof e.charIndex==='number'){
+   const before=part.slice(0,e.charIndex);
+   wordIndex=chunkStart+wordCount(before);
+   updateProgress();
+  }
+ };
+ utterance.onend=()=>{
+  if(!isPlaying)return;
+  wordIndex=Math.min(wordList.length,chunkStart+chunkWords.length);updateProgress();speakNext();
+ };
+ utterance.onerror=e=>{if(isPlaying&&e.error!=='canceled'&&e.error!=='interrupted'){$('readerStatus').textContent='Speech stopped. You can press Play to continue.';isPlaying=false}};
+ synth.speak(utterance);
+ $('readerStatus').textContent='Reading aloud · progress saves as you listen';
+}
+function play(){
+ if(!synth){$('readerStatus').textContent='This browser does not support text-to-speech.';return}
+ if(synth.paused){synth.resume();isPlaying=true;$('readerStatus').textContent='Reading aloud';return}
+ if(isPlaying)return;
+ isPlaying=true;updateVoiceList();speakNext();
+}
+function goToWord(n){
+ stopSpeech();wordList=words(activeBook.text);
+ wordIndex=Math.max(0,Math.min(wordList.length-1,(Number(n)||1)-1));
+ updateProgress();$('readerStatus').textContent='Ready at word '+(wordIndex+1)+'. Press Play to listen.';
+}
+$('addBook').onclick=()=>{
+ const title=prompt('What is the book called?');if(!title||!title.trim())return;
+ const book={id:'book-'+Date.now(),title:title.trim(),subtitle:'Your book',text:'Paste or write your story here.',lastWord:0};
+ books.push(book);persist();renderGallery();openBook(book.id);$('editTitle').value=book.title;$('editStory').value=book.text;$('editPanel').hidden=false;
+};
+$('backLibrary').onclick=()=>{stopSpeech();$('readerView').hidden=true;$('galleryView').hidden=false;renderGallery();persist();window.scrollTo({top:0,behavior:'smooth'})};
+$('playBtn').onclick=play;
+$('pauseBtn').onclick=()=>{if(synth&&isPlaying){synth.pause();$('readerStatus').textContent='Paused · your place is saved'}};
+$('stopBtn').onclick=()=>{stopSpeech();$('readerStatus').textContent='Stopped · your place is saved';updateProgress()};
+$('back10').onclick=()=>goToWord(wordIndex-9);
+$('forward10').onclick=()=>goToWord(wordIndex+11);
+$('jumpWord').onclick=()=>goToWord($('wordNumber').value);
+$('goSection').onclick=()=>{
+ const n=Number($('sectionSelect').value)||0;const paras=activeBook.text.split(/\\n\\s*\\n/).map(t=>t.trim()).filter(Boolean);
+ goToWord(paras.slice(0,n).reduce((sum,p)=>sum+wordCount(p),0)+1);
+};
+$('viewText').onclick=()=>{$('editPanel').hidden=true;$('textPanel').hidden=!$('textPanel').hidden;renderVisibleText()};
+$('closeText').onclick=()=>$('textPanel').hidden=true;
+$('editText').onclick=()=>{stopSpeech();$('textPanel').hidden=true;$('editTitle').value=activeBook.title;$('editStory').value=activeBook.text;$('editPanel').hidden=!$('editPanel').hidden};
+$('cancelEdit').onclick=()=>$('editPanel').hidden=true;
+$('saveEdit').onclick=()=>{
+ const title=$('editTitle').value.trim(),text=$('editStory').value.trim();
+ if(!title||!text){alert('Please enter a book title and some text.');return}
+ activeBook.title=title;activeBook.text=text;activeBook.lastWord=0;wordIndex=0;wordList=words(text);
+ $('bookTitle').textContent=title;$('editPanel').hidden=true;renderSections();renderVisibleText();updateProgress();renderGallery();persist();
+ $('readerStatus').textContent='Changes saved. Listening will start from the beginning.';
+};
+if(synth){updateVoiceList();synth.onvoiceschanged=updateVoiceList}
+load();renderGallery();
 })();
 </script></body></html>
