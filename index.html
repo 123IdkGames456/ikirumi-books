@@ -146,7 +146,7 @@ function renderEpisode(){
  $('episodeTitle').textContent='Episode '+(episodeIndex+1)+' of '+episodeParts.length+' · Part '+(episodePart+1)+' of 2';
  const done=Array.isArray(activeBook.readEpisodes)&&activeBook.readEpisodes.includes(episodeIndex);
  $('episodeStatus').textContent=done?'Marked as read on this device':'Marked as not read';
- $('episodeText').textContent=currentEpisodeText();
+ $('episodeText').textContent=currentEpisodeText();renderVisibleText();
  $('partOne').classList.toggle('primary',episodePart===0);$('partTwo').classList.toggle('primary',episodePart===1);
  $('nextEpisode').textContent=episodeIndex===episodeParts.length-1?'Back to Episode 1 ↻':'Next Episode →';
  $('bookProgress').textContent=(activeBook.readEpisodes||[]).length+' of '+episodeParts.length+' episodes marked as read';
@@ -162,14 +162,14 @@ function updateProgress(){
 function renderGallery(){
  const gallery=$('bookGallery');gallery.innerHTML='';
  books.forEach(book=>{
-  const total=Math.max(1,wordCount(book.text)),pos=Math.min(total,book.lastWord||0);
+  const total=20,done=Array.isArray(book.readEpisodes)?book.readEpisodes.length:0,pos=Math.min(total,done);
   const card=document.createElement('article');card.className='book-card';
   const icon=document.createElement('div');icon.className='book-icon';icon.textContent='▤';
   const title=document.createElement('h3');title.textContent=book.title;
-  const meta=document.createElement('div');meta.className='hint';meta.textContent=pos?'Continue from word '+(pos+1):'Not started yet';
+  const meta=document.createElement('div');meta.className='hint';meta.textContent=done+' of 20 episodes marked as read';
   const bar=document.createElement('div');bar.className='card-progress';const fill=document.createElement('span');fill.style.width=(100*pos/total)+'%';bar.append(fill);
   const open=document.createElement('button');open.className='primary';open.textContent=pos?'Continue listening':'Open book';open.onclick=()=>openBook(book.id);
-  const wordsMeta=document.createElement('div');wordsMeta.className='hint';wordsMeta.textContent=total+' words';
+  const wordsMeta=document.createElement('div');wordsMeta.className='hint';wordsMeta.textContent='20 episodes · 2 parts each';
   card.append(icon,title,meta,bar,wordsMeta,open);gallery.append(card);
  });
 }
@@ -186,7 +186,7 @@ function renderSections(){
  paragraphs.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.replace(/\s+/g,' ').slice(0,50)+(p.length>50?'…':'');sel.append(o)});
 }
 function renderVisibleText(){
- const container=$('visibleText');container.textContent=activeBook.text;
+ const container=$('visibleText');container.textContent=currentEpisodeText();
 }
 function updateVoiceList(){
  if(!synth)return;
