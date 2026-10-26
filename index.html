@@ -76,12 +76,29 @@ function words(text){return text.match(/\S+/g)||[]}
 function wordCount(text){return words(text).length}
 function defaultBook(){
  const legacy=$('legacyContent');
+ const wasHidden=legacy.hidden;
+ legacy.hidden=false;
  const title='The Torches Wind';
  const parts=[...legacy.querySelectorAll('.intro,.rules,.chapter')].map(el=>el.innerText.replace(/\n{3,}/g,'\n\n').trim()).filter(Boolean);
+ legacy.hidden=wasHidden;
  return {id:'torches-wind',title,subtitle:'A mystery told in the dark',text:parts.join('\n\n'),lastWord:0};
 }
 function load(){
- try{const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved&&Array.isArray(saved.books)&&saved.books.length){books=saved.books;return}}catch(e){}
+ let saved=null;
+ try{saved=JSON.parse(localStorage.getItem(STORE)||'null')}catch(e){}
+ if(saved&&Array.isArray(saved.books)&&saved.books.length){
+  books=saved.books;
+  const original=books.find(b=>b.id==='torches-wind');
+  if(original&&wordCount(original.text)===0){
+   const replacement=defaultBook();
+   original.text=replacement.text;
+   original.lastWord=0;
+  }
+  books=books.filter(b=>b.id!=='torches-wind'||wordCount(b.text)>0);
+  if(!books.length)books=[defaultBook()];
+  persist();
+  return;
+ }
  books=[defaultBook()];persist();
 }
 function persist(){try{localStorage.setItem(STORE,JSON.stringify({books,activeId}))}catch(e){$('savedStatus').textContent='Could not save: browser storage may be full.'}}
